@@ -1,14 +1,23 @@
 import React,{Component} from 'react';
-import { act } from 'react-dom/test-utils';
-
+import axios from 'axios'
 const Context = React.createContext();
 const reducer = (state,action) => {
     switch (action.type) {
         case 'DELETE_CONTACT':
             return {
                 ...state,
-                contacts:state.contacts.filter(contact => contact.id != action.payload)
-            }
+                contacts:state.contacts.filter(contact => contact.id !== action.payload)
+            };
+        case 'ADD_CONTACT':
+            return {
+                ...state,
+                contacts:[action.payload,...state.contacts]
+            };
+        case 'UPDATE_CONTACT':
+            return {
+                ...state,
+                contacts:state.contacts.map(contact => contact.id === action.payload.id ? (contact = action.payload) : contact)
+            };
             default:
                 return state;
     }
@@ -16,29 +25,18 @@ const reducer = (state,action) => {
 
 export class Provider extends Component {
     state = {
-        contacts : [
-            {
-                id:1,
-                name:'Arash',
-                email:'arash@gmail.com',
-                phone:'09198003528'
-            },
-            {
-                id:2,
-                name:'Hamid',
-                email:'hamid@gmail.com',
-                phone:'09125101781'
-            },
-            {
-                id:3,
-                name:'Mary',
-                email:'mary@gmail.com',
-                phone:'09124392798'
-            }
-        ],
-        dispath:action => this.setState(state => reducer(state,action))
+        contacts : [],
+        dispatch:action => {
+            this.setState(state => reducer(state,action))
+        }
         
     }
+    async componentDidMount() {
+        const res = await axios.get('https://jsonplaceholder.typicode.com/users');
+
+        this.setState({contacts:(await res).data})
+    }
+    
     render() {
         return (
             <Context.Provider value={this.state}>

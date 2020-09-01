@@ -1,18 +1,28 @@
 import React, { Component } from 'react'
 
 export default class AddContact extends Component {
-    state={
-        name:'',
-        email:'',
-        phone:''
+    constructor(props) {
+        super(props);
+        this.nameInput=React.createRef()
+        this.phoneInput=React.createRef()
+        this.emailInput=React.createRef()
     }
-    onChange = e => this.setState({[e.target.name]:e.target.value});
     onSubmit = e => {
         e.preventDefault();
-        console.log(this.state)
+        const contact = {
+            name:this.nameInput.current.value,
+            email:this.emailInput.current.value,
+            phone:this.phoneInput.current.value,
+        }
+        console.log(contact);
+    }
+    static defaultProps = {
+        name:'arash',
+        email:'arash@gmail.com',
+        phone:'09198003528'
     }
     render() {
-        const {name,phone,email} = this.state;
+        const {name,phone,email} = this.props;
         return (
             <div className="card mb-3">
                 <div className="card-header">Add Contact</div>
@@ -23,24 +33,24 @@ export default class AddContact extends Component {
                             className="form-control form-control-lg mb-1"
                             placeholder="Name"
                             name="name"
-                            value={name}
-                            onChange={this.onChange}
+                            defaultValue={name}
+                            ref={this.nameInput}
                             />
                             <input 
                             type="email" 
                             className="form-control form-control-lg mb-1"
                             placeholder="Email"
                             name="email"
-                            value={email}
-                            onChange={this.onChange}
+                            defaultValue={email}
+                            ref={this.emailInput}
                             />
                             <input 
                             type="text" 
                             className="form-control form-control-lg mb-1"
                             placeholder="Phone"
                             name="phone"
-                            value={phone}
-                            onChange={this.onChange}
+                            defaultValue={phone}
+                            ref={this.phoneInput}
                             />
                             <input type="submit" value="Add" className="btn btn-light btn-block"/>
                     </form>
